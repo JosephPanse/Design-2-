@@ -3,12 +3,14 @@
 int bluetoothTx = 2;  // TX-O pin of bluetooth mate, Arduino D2
 int bluetoothRx = 3;  // RX-I pin of bluetooth mate, Arduino D3
 SoftwareSerial bluetooth(bluetoothTx, bluetoothRx);
-
+SoftwareSerial XBee(9, 10); // RX, TX
+char data;
+int duration;
 
 void setup()
 {
   Serial.begin(9600);  // Begin the serial monitor at 9600bps
-
+  XBee.begin(9600);
   bluetooth.begin(9600);  // The Bluetooth Mate defaults to 115200bps
   delay(200);
   bluetooth.print("$");  // Print three times individually
@@ -31,11 +33,22 @@ void setup()
 void loop()
 {
  if(bluetooth.available())  // If the bluetooth sent any characters
-  { 
-    // Send any characters the bluetooth prints to the serial monitor
+ {
+    delay(2);
+    data = bluetooth.read();
+    if(data>0)
+    {
+      XBee.print(data);
+      duration = millis();
+      //if(data == "")
+      //{
+    //Xbee.write("No data;");
+      }
+   // else if (data == "1"){
+    //digitalWrite(ledPin, LOW);
+ }
+    data = "";
   
-    Serial.print((char)bluetooth.read());  
-  }
   if(Serial.available())  // If stuff was typed in the serial monitor
   {
     // Send any characters the Serial monitor prints to the bluetooth
